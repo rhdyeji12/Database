@@ -1,0 +1,165 @@
+#실습 1-1
+CREATE DATABASE `Shop`;
+CREATE USER 'shop'@'%' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON Shop.* to 'shop'@'%';
+FLUSH PRIVILEGES;
+
+use shop;
+#실습1-2
+CREATE TABLE `Customer` (
+	`custId` VARCHAR(10)  PRIMARY KEY,
+	`name`   VARCHAR(10)  NOT NULL,
+	`hp`	   CHAR(13)     DEFAULT NULL,
+	`addr`   VARCHAR(100) DEFAULT NULL,
+	`rdate`	DATE         NOT NULL
+);
+
+CREATE TABLE `Product` (
+	`prodNo`	   INT         PRIMARY KEY,
+	`prodName`  VARCHAR(10) NOT NULL,
+	`stock`		INT         DEFAULT 0,
+	`price`		INT 	      DEFAULT NULL,
+	`company`   VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE `Order` (
+	`orderNo`		INT         PRIMARY KEY,
+	`orderId`      VARCHAR(10)  NOT NULL,
+	`orderProduct` INT          NOT NULL,
+	`orderCount`	INT         DEFAULT 1,
+	`orderDate`    DATETIME     NOT NULL
+);
+
+#실습1-3
+INSERT INTO `Customer` VALUES ('c101', '김유신', '010-1234-1001', '김해시 봉황동', '2022-01-01');
+INSERT INTO `Customer` VALUES ('c102', '김춘추', '010-1234-1002', '경주시 보문동', '2022-01-02');
+INSERT INTO `Customer` VALUES ('c103', '장보고', '010-1234-1003', '완도군 청산면', '2022-01-03');
+INSERT INTO `Customer` VALUES ('c104', '강감찬', '010-1234-1004', '서울시 마포구', '2022-01-04');
+INSERT INTO `Customer` (`custid`, `name`, `rdate`) VALUES ('c105', '이성계', '2022-01-05');
+INSERT INTO `Customer` VALUES ('c106', '정철', '010-1234-1006', '경기도 용인시', '2022-01-06');
+INSERT INTO `Customer` (`custid`, `name`, `rdate`) VALUES ('c107', '허준', '2022-01-07');
+INSERT INTO `Customer` VALUES ('c108', '이순신', '010-1234-1008', '서울시 영등포구', '2022-01-08');
+INSERT INTO `Customer` VALUES ('c109', '송상현', '010-1234-1009', '부산시 동래구', '2022-01-09');
+INSERT INTO `Customer` VALUES ('c110', '정약용', '010-1234-1010', '경기도 광주시', '2022-01-10');
+
+INSERT INTO `Product` VALUES (1, '새우깡',   5000, 1500, '농심');
+INSERT INTO `Product` VALUES (2, '초코파이', 2500, 2500, '오리온');
+INSERT INTO `Product` VALUES (3, '포카칩',   3600, 1700, '오리온');
+INSERT INTO `Product` VALUES (4, '양파링',   1250, 1800, '농심');
+INSERT INTO `Product` (`prodNo`, `prodName`, `stock`, `company`) VALUES (5, '죠리퐁',   2200, '크라운');
+INSERT INTO `Product` VALUES (6, '마카렛트', 3500, 3500, '롯데');
+INSERT INTO `Product` VALUES (7, '뿌셔뿌셔', 1650, 1200, '오뚜기');
+
+INSERT INTO `Order` VALUES (1,  'c102', 3, 2, '2022-07-01 13:15:10');
+INSERT INTO `Order` VALUES (2,  'c101', 4, 1, '2022-07-01 14:16:11');
+INSERT INTO `Order` VALUES (3,  'c108', 1, 1, '2022-07-01 17:23:18');
+INSERT INTO `Order` VALUES (4,  'c109', 6, 5, '2022-07-02 10:46:36');
+INSERT INTO `Order` VALUES (5,  'c102', 2, 1, '2022-07-03 09:15:37');
+INSERT INTO `Order` VALUES (6,  'c101', 7, 3, '2022-07-03 12:35:12');
+INSERT INTO `Order` VALUES (7,  'c110', 1, 2, '2022-07-03 16:55:36');
+INSERT INTO `Order` VALUES (8,  'c104', 2, 4, '2022-07-04 14:23:23');
+INSERT INTO `Order` VALUES (9,  'c102', 1, 3, '2022-07-04 21:54:34');
+INSERT INTO `Order` VALUES (10, 'c107', 6, 1, '2022-07-05 14:21:03');
+
+
+
+
+
+
+-- 실습 1-4
+select * from customer;
+
+-- 실습 1-5
+select custId, name , hp from customer;
+
+-- 실습 1-6
+select * from product;
+
+-- 실습 1-7
+select company from product;
+
+-- 실습 1-8
+select distinct company from product; 
+
+-- 실습 1-9
+select prodName, price from product;
+
+-- 실습 1-10
+select prodName, price+500 as `조정단가` from product; 
+
+-- 실습 1-11
+select prodName, stock, price from product where company = '오리온';
+
+-- 실습 1-12
+select orderProduct, orderCount, orderDate from `order` where orderId = 'c102'; 
+
+-- 실습 1-13
+select orderProduct, orderCount, orderDate from `Order` where orderId = 'c102' and orderCount >= 2;
+
+-- 실습 1-14
+select * from `Product` where price >= 1000 and price <= 2000;
+
+-- 실습 1-15
+select `custId`, `name`, `hp`, `addr` from `customer` where `name` like '김%'; 
+
+-- 실습 1-16
+select `custid`, `name`, `hp`, `addr` from customer where name like '__';
+
+-- 실습 1-17
+select * from customer where hp is null;
+
+-- 실습 1-18
+select * from customer where addr is not null;
+
+-- 실습 1-19
+select * from customer order by rdate desc; 
+
+-- 실습 1-20
+select * from `order` where orderCount >=3 order by orderCount desc, orderNo asc;
+
+-- 실습 1-21
+select round(avg(price),-1) as '평균단가' from product;
+
+-- 실습 1-22
+select sum(stock) as `재고량 합계` from product where company = '농심';
+
+-- 실습 1-23
+select count(custId) as `고객수` from customer;
+
+-- 실습 1-24
+select count(distinct company) as `제조업체수` from product;
+
+-- 실습 1-25
+select orderNo as '주문 상품번호', sum(orderCount) as '총 수문 수량' from `order` group by orderNo;
+
+-- 실습 1-26
+SELECT company AS '제조업체', COUNT(prodName) AS '제품수', MAX(price) AS '최고가'
+FROM product
+GROUP BY company;
+
+-- 실습 1-27
+select company as `제조업체` , count(prodName) as `제품수`, max(price) as `최고가` from product 
+group by company having `제품수` >=2;
+
+-- 실습 1-28
+select * 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
